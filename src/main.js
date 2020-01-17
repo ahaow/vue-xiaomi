@@ -3,10 +3,10 @@ import router from './router'
 import axios from 'axios'
 import VueAaxios from 'vue-axios'
 import App from './App.vue'
-import env from './env'
+// import env from './env'
 
 // 根据前端的跨域方式做调整
-axios.defaults.baseURL = env.baseURL
+axios.defaults.baseURL = '/api'
 axios.defaults.timeout = 8000
 
 // 接口错误拦截

@@ -245,6 +245,7 @@ export default {
             opacity: 0;
             overflow: hidden;
             border-top: 1px solid #e5e5e5;
+            background-color: #fff;
             box-shadow: 0px 7px 6px 0px rgba(0, 0, 0, 0.11);
             z-index: 10;
             transition: all 0.3s ease-in;

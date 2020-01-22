@@ -37,6 +37,7 @@
   </div>
 </template>
 <script>
+import { mapActions } from 'vuex';
 export default {
   name: 'login',
   data(){
@@ -47,6 +48,7 @@ export default {
     }
   },
   methods:{
+    ...mapActions(['saveUserName']),
     login() {
         let { username,password } = this
         this.axios.post('/user/login',{
@@ -55,6 +57,8 @@ export default {
         }).then(res => {
             console.log(res)
             this.$cookie.set('userId',res.id,{expires: '1M'})
+            // this.$store.dispatch('saveUserName')
+            this.saveUserName(res.username)
             this.$router.push('/index')
         })
     },

@@ -94,7 +94,7 @@
       </div>
     </div>
     <service-bar></service-bar>
-    <modal 
+    <modal
       title="提示"
       sureText="查看购物车"
       btnType="1"
@@ -102,11 +102,10 @@
       :showModal="showModal"
       @submit="goToCart"
       @cancel="showModal=false"
-      >
+    >
       <template v-slot:body>
         <p>商品添加成功!</p>
       </template>
-    
     </modal>
   </div>
 </template>
@@ -195,31 +194,37 @@ export default {
   },
   methods: {
     init() {
-      this.axios.get("/products", {
+      this.axios
+        .get("/products", {
           params: {
-            categoryId: '100012',
+            categoryId: "100012",
             pageSize: 14
           }
         })
         .then(res => {
-          res.list = res.list.slice(6,14);
-          this.phoneList = [res.list.slice(0,4),res.list.slice(4,8)]
+          res.list = res.list.slice(6, 14);
+          this.phoneList = [res.list.slice(0, 4), res.list.slice(4, 8)];
         });
     },
     addCart(id) {
-      console.log(id)
-      this.showModal = true
-      // this.axios.post('/carts',{
-      //   productId: id,
-      //   selected: true
-      // }).then((res) => {
-      //   console.log(res)
-      // }).catch(() => {
-      //   this.showModal = true
-      // })
+      console.log(id);
+      this.showModal = true;
+      this.axios
+        .post("/carts", {
+          productId: id,
+          selected: true
+        })
+        .then(res => {
+          console.log(res);
+          this.showModal = true;
+          this.$store.dispatch("saveCartCount", res.cartTotalQuantity);
+        })
+        .catch(() => {
+          this.showModal = true;
+        });
     },
     goToCart() {
-      this.$router.push('/cart')
+      this.$router.push("/cart");
     }
   },
   mounted() {
@@ -381,7 +386,7 @@ export default {
             }
             .item-img {
               img {
-                  width: 100%;
+                width: 100%;
                 height: 195px;
               }
             }

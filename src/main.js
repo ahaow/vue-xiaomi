@@ -6,8 +6,9 @@ import VueLazyLoad from 'vue-lazyload'
 import App from './App.vue'
 import VueCookie from 'vue-cookie'
 import store from './store'
+import { Message } from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
 // import env from './env'
-
 // 根据前端的跨域方式做调整
 axios.defaults.baseURL = '/api'
 axios.defaults.timeout = 8000
@@ -22,9 +23,10 @@ axios.interceptors.response.use(function(response) {
       if(path != '#/index') {
         window.location.herf = '/#/login'
       }
-      return Promise.reject(res);
+      return Promise.reject(res)
     } else {
-      alert(res.msg)
+      this.$message.warning(res.msg)
+      return Promise.reject(res)
     }
 })
 
@@ -33,6 +35,7 @@ Vue.use(VueCookie)
 Vue.use(VueLazyLoad,{
   loading: '/imgs/loading-svg/loading-bars.svg'
 })
+Vue.prototype.$message = Message
 Vue.config.productionTip = false
 
 new Vue({

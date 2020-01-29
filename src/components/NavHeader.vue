@@ -9,12 +9,13 @@
           <a href="javascript:;">协议规则</a>
         </div>
         <div class="topbar-user">
-          <a href="javascript:;" v-if="username">{{username}}</a>
-          <a href="javascript:;" v-else @click="login">登录</a>
+          <a href="javascript:;" v-if="username">{{ username }}</a>
+          <a href="javascript:;" v-if="username" @click="logout">退出</a>
+          <a href="javascript:;" v-if="!username" @click="login">登录</a>
           <a href="javascript:;" v-if="username">我的订单</a>
           <a href="javascript:;" v-else>注册</a>
           <a href="javascript:;" class="my-cart" @click="goToCart">
-            <span class="icon-cart"></span>购物车({{cartCount}})
+            <span class="icon-cart"></span>购物车({{ cartCount }})
           </a>
         </div>
       </div>
@@ -29,13 +30,17 @@
             <span>小米手机</span>
             <div class="children">
               <ul>
-                <li class="product" v-for="(item,index) in phoneList" :key="index">
-                  <a  :href="'/#/product/' + item.id" target="_blank">
+                <li
+                  class="product"
+                  v-for="(item, index) in phoneList"
+                  :key="index"
+                >
+                  <a :href="'/#/product/' + item.id" target="_blank">
                     <div class="pro-img">
                       <img :src="item.mainImage" :alt="item.subtitle" />
                     </div>
-                    <div class="pro-name">{{item.name}}</div>
-                    <div class="pro-price">{{item.price | currency}}</div>
+                    <div class="pro-name">{{ item.name }}</div>
+                    <div class="pro-price">{{ item.price | currency }}</div>
                   </a>
                 </li>
               </ul>
@@ -119,13 +124,13 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapActions } from "vuex";
 export default {
   name: "nav-header",
   data() {
-      return {
-          phoneList: []
-      }
+    return {
+      phoneList: []
+    };
   },
   computed: {
     // username() {
@@ -134,38 +139,59 @@ export default {
     // cartCount() {
     //   return this.$store.state.cartCount
     // },
-    ...mapState(['username','cartCount'])
+    ...mapState(["username", "cartCount"])
   },
   filters: {
-      currency(val) {
-          if(!val) return '0.00'
-          return '¥' + val.toFixed(2) + '元'
-      }
+    currency(val) {
+      if (!val) return "0.00";
+      return "¥" + val.toFixed(2) + "元";
+    }
   },
   methods: {
-      login() {
-        this.$router.push('/login')
-      },
-      getProductList() {
-          this.axios.get('/products',{
-              parmas: {
-                  categoryId: '100012'
-              }
-          }).then(res => {
-              console.log(res)
-              if(res.list.length > 6) {
-                  this.phoneList = res.list.slice(4,10)
-              }
-          })
-      },
-      goToCart() {
-          this.$router.push('/cart')
-      }
+    ...mapActions(["saveUserName", "saveCartCount"]),
+    login() {
+      this.$router.push("/login");
+    },
+    logout() {
+      this.axios.post("/user/logout").then(res => {
+        console.log(res);
+        this.$message.success("退出成功");
+        this.$cookie.set("userId", "", { expires: "-1" });
+        this.saveUserName("");
+        this.saveCartCount(0);
+      });
+    },
+    getCartCount() {
+      this.axios.get("/carts/products/sum").then(res => {
+        console.log(res);
+        this.$store.dispatch("saveCartCount", res);
+      });
+    },
+    getProductList() {
+      this.axios
+        .get("/products", {
+          parmas: {
+            categoryId: "100012"
+          }
+        })
+        .then(res => {
+          console.log(res);
+          if (res.list.length > 6) {
+            this.phoneList = res.list.slice(4, 10);
+          }
+        });
+    },
+    goToCart() {
+      this.$router.push("/cart")
+    }
   },
   mounted() {
-      this.getProductList()
+    this.getProductList() 
+    let params = this.$route.params
+    if(params && params.from == 'login') {
+      this.getCartCount()
+    }
   }
-
 };
 </script>
 

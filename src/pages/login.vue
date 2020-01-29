@@ -38,6 +38,7 @@
 </template>
 <script>
 import { mapActions } from 'vuex';
+
 export default {
   name: 'login',
   data(){
@@ -56,10 +57,15 @@ export default {
             password
         }).then(res => {
             console.log(res)
-            this.$cookie.set('userId',res.id,{expires: '1M'})
+            this.$cookie.set('userId',res.id,{expires: 'Session'})
             // this.$store.dispatch('saveUserName')
             this.saveUserName(res.username)
-            this.$router.push('/index')
+            this.$router.push({
+              name: 'index',
+              params: {
+                from: 'login'
+              }
+            })
         })
     },
     register() {
@@ -69,7 +75,7 @@ export default {
             email: 'hanzo@qq.com'
         }).then(res => {
             console.log(res)
-            alert('注册成功')
+            this.$message.success('注册成功')
             this.$router.push('/index')
         })
     }

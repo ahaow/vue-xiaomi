@@ -8,6 +8,8 @@ import VueCookie from 'vue-cookie'
 import store from './store'
 import { Message } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+import * as filters from './filters'
+
 // import env from './env'
 // 根据前端的跨域方式做调整
 axios.defaults.baseURL = '/api'
@@ -40,6 +42,10 @@ Vue.use(VueLazyLoad,{
 })
 Vue.prototype.$message = Message
 Vue.config.productionTip = false
+Object.keys(filters).forEach(key => {
+  Vue.filter(key,filters[key])
+})
+
 
 new Vue({
   router,
